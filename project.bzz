@@ -1,121 +1,51 @@
-#
-# In the ARGoS window, you can move the camera with the following commands:
-#
-# - Translation: W A S D Q E keys, right-click + drag
-# - Rotation: left-click + drag
-#
-# Selection: shift-click on the robot
-# Remove selection: shift-click elsewhere
-#
-# Bug: selection is finnicky in the top-down view (Camera 1).
-# Solution: switch to another camera and it'll work.
-#
-
-#
-# Compiling and running the code
-#
-# - In the ARGoS window: Pause the simulation (if it's not paused already)
-# - In the editor: do what you need, save, press the "Execute" button
-# - In the ARGoS window: Press the "Play", "Step", or "Fast Forward" buttons
-#
-
-#
-# This editor sucks.
-#
-# I know.
-#
-# But when it's open, it detects whether the open files have been modified elsewhere.
-# So open this editor and then open the file you wanna edit in your favorite editor.
-# When you save in your editor, the changes will be reflected here. Press Execute to compile and run.
-# If you want syntax highlighting, JavaScript is pretty similar to Buzz.
-#
+# We need this for 2D vectors
+# Make sure you pass the correct include path to "bzzc -I <path1:path2> ..."
 
 include "../../Buzz/src/include/vec2.bzz"
+ 
+# Lennard-Jones parameters
+TARGET     = 50.0
+EPSILON    = 100.0
 
-function lenard_jones() {
-	#https://canvas.wpi.edu/courses/58179/files/folder/Lectures/L12_IntroToSwarmRobotics?preview=6442920
+tarX = 10
+tarY = 10
+ 
+# Lennard-Jones interaction magnitude
+function lj_magnitude(dist, target, epsilon) {
+  return -(epsilon / dist) * ((target / dist)^4 - (target / dist)^2)
 }
-
-function diffuse() {	
-	# Get and sum proximity readings together
-	cAccumulator = math.vec2.new(0.0, 0.0)
-	foreach(proximity, function(key,prox) {
-		cAccumulator = math.vec2.add(cAccumulator, math.vec2.newp(prox.value, prox.angle))
-	})
-	
-	cAccumulator = math.vec2.scale(cAccumulator, 1.0/size(proximity))
-	# If the angle of the vector is small enough and the closest obstacle
-	# is far enough, continue going straight, otherwise curve a little
-	cAngle = math.vec2.angle(cAccumulator)
-	#if (id == 22) {log(cAngle)}
-	if(math.vec2.length(cAccumulator) <= m_fDelta) {
-		# Go straight 
-		set_wheels(m_fWheelVelocity, m_fWheelVelocity)
-	}
-	else {
-		# Turn, depending on the sign of the angle
-		if(cAngle > 0.0) {
-			set_wheels(m_fWheelVelocity, 0.0)
-		}
-		else {
-			set_wheels(0.0, m_fWheelVelocity)
-		}
-	}
+ 
+# Neighbor data to LJ interaction vector
+function lj_vector(rid, data) {
+  return math.vec2.newp(lj_magnitude(data.distance, TARGET, EPSILON), data.azimuth)
 }
-
-
-function synchronize() {
-	count = count + 1
-	if (heardFlash == 1) {
-		count = count + k * count
-	}
-
-	if (count >= T) {
-		count = 0
-		flashed = 1
-		set_leds(255,255,255)
-	}
-	else {
-		flashed = 0
-		set_leds(0,0,0)
-	}
-
-	neighbors.broadcast("flashed", flashed)
+ 
+# Accumulator of neighbor LJ interactions
+function lj_sum(rid, data, accum) {
+  return math.vec2.add(data, accum)
 }
-
-# This function is executed once at init time
+ 
+# Calculates and actuates the flocking interaction
+function hexagon() {
+  # Calculate accumulator
+  var accum = neighbors.map(lj_vector).reduce(lj_sum, math.vec2.new(0.0, 0.0))
+  #accum = math.vec2.add(accum, math.vec2.new(tarX - pose.position.x, tarY - pose.position.y))
+	if(neighbors.count() > 0)
+    math.vec2.scale(accum, 1.0 / neighbors.count())
+  # Move according to vector
+	log("X: ", accum.x, ", Y: ", accum.y)
+  goto(accum.x, accum.y)
+}
+ 
+# Executed at init time
 function init() {
-	m_fWheelVelocity = 5.0
-	m_fDelta = 0.0
-	
-	T = 100
-	k = 0.9
-	neighbors.listen("flashed", function(vid, value, rid) {
-		if (value == 1) {
-			heardFlash = 1
-		}
-		else {
-			heardFlash = 0
-		}
-		#log("Got (", vid, ",", value, ") from robot ", rid)
-	})
-	flashed = 0
-
-	math.rng.setseed(id)
-	count = math.rng.uniform(T)
 }
-
-# This function is executed at each time step
-# The main loop is controller by ARGoS
+ 
+# Executed every time step
 function step() {
-	synchronize()
-	diffuse()
+  hexagon()
 }
-
-# This function is executed when you press the reset button
-function reset() {
-}
-
-# This function is executed once when you close the simulator
+ 
+# Execute at exit
 function destroy() {
 }
