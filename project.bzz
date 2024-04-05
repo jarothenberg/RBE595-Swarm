@@ -62,21 +62,79 @@ function diffuse() {
 
 # This function is executed once at init time
 function init() {
-	m_fWheelVelocity = 5.0
+	m_fWheelVelocity = 10.0
 	m_fDelta = 0.0
-
+	
+	all_colors = {.c1 = "RED", .c2 = "GREEN", .c3 = "BLUE"}
+	
+	math.rng.setseed(id)
+	
 	if (id % 2 == 0) {
-		set_leds(255,0,0)
+		color = "RED"
 	}
 	else {
-		set_leds(0,0,255)
+		color = "BLUE"
+	}
+	set_color(color)
+
+	listRad = 50
+	checkNum = 5
+	neighbor_colors = {}
+
+	neighbors.listen("colors", function(vid, value, rid) {
+		if ((neighbor_colors[rid] == nil) and (neighbors.get(rid).distance <= listRad)) {
+				#log("RID: ", rid, ", COL: ", value)
+				neighbor_colors[rid] = value
+		}
+	})
+}
+
+function check_neighbors() {
+	colorNums = {}
+	if (size(neighbor_colors) >= checkNum) {
+		maxColorNum = 0
+		maxColor = ""
+		foreach (neighbor_colors, function(key,value) {
+			if (colorNums[value] == nil) {
+				colorNums[value] = 1
+			}
+			else {
+				colorNums[value] = colorNums[value]+1
+			}
+			if (colorNums[value] > maxColorNum) {
+					maxColorNum = colorNums[value]
+					maxColor = value
+			}
+		})
+		set_color(maxColor)
+		#log("CHANGING COLOR: ", maxColor)
+		neighbor_colors = {}
 	}
 }
 
+function set_color(colorStr) {
+	if (colorStr == "RED") {
+		color = "RED"
+		set_leds(255,0,0)
+	} 
+	else if(colorStr == "GREEN") {
+		color = "GREEN"
+		set_leds(0,255,0)
+	}
+	else if(colorStr == "BLUE") {
+		color = "BLUE"
+		set_leds(0,0,255)
+	}
+	else {
+		log("Color: ", colorStr, " is not defined")
+	}
+}
 # This function is executed at each time step
 # The main loop is controller by ARGoS
 function step() {
 	diffuse()
+	check_neighbors()
+	neighbors.broadcast("colors", color)
 }
 
 # This function is executed when you press the reset button
