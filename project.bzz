@@ -30,8 +30,24 @@
 # If you want syntax highlighting, JavaScript is pretty similar to Buzz.
 #
 
-#include "../../Buzz/src/include/vec2.bzz"
-include "../../../WPI_SwarmIntel/Buzz/src/include/vec2.bzz"
+include "../../Buzz/src/include/vec2.bzz"
+#include "../../../WPI_SwarmIntel/Buzz/src/include/vec2.bzz"
+
+numRobots = 30
+all_colors = {}
+all_colors["RED"] =        {.r = 255, .g = 000, .b = 000, .num = 0.2}
+all_colors["ORANGE"] =     {.r = 255, .g = 128, .b = 000, .num = 0.0}
+all_colors["YELLOW"] =     {.r = 255, .g = 255, .b = 000, .num = 0.167}
+all_colors["CHARTREUSE"] = {.r = 128, .g = 255, .b = 000, .num = 0.0}
+all_colors["GREEN"] =      {.r = 000, .g = 255, .b = 000, .num = 0.167}
+all_colors["SPRING"] =     {.r = 000, .g = 255, .b = 128, .num = 0.0}
+all_colors["CYAN"] =       {.r = 000, .g = 255, .b = 255, .num = 0.167}
+all_colors["AZURE"] =      {.r = 000, .g = 128, .b = 255, .num = 0.0}
+all_colors["BLUE"] =       {.r = 000, .g = 000, .b = 255, .num = 0.167}
+all_colors["VIOLET"] =     {.r = 128, .g = 000, .b = 128, .num = 0.0}
+all_colors["MAGENTA"] =    {.r = 255, .g = 000, .b = 255, .num = 0.167}
+all_colors["ROSE"] =       {.r = 255, .g = 000, .b = 128, .num = 0.0}
+
 
 function diffuse() {	
 	# Get and sum proximity readings together
@@ -65,18 +81,22 @@ function diffuse() {
 function init() {
 	m_fWheelVelocity = 10.0
 	m_fDelta = 0.0
-	
-	all_colors = {.c1 = "RED", .c2 = "GREEN", .c3 = "BLUE"}
-	
+		
 	math.rng.setseed(id)
 	
-	if (id % 2 == 0) {
-		color = "RED"
-	}
-	else {
-		color = "BLUE"
-	}
-	set_color(color)
+	idCounter = 0
+	totalIdCounter = 0
+	foreach(all_colors, function(key, value) {
+		while (idCounter <= value.prob*numRobots-1) {
+			if (id == totalIdCounter) {
+				set_color(key)
+				log("Setting ID: ", id, " Color: ", key)
+			}
+			idCounter = idCounter + 1
+			totalIdCounter = totalIdCounter + 1
+		}
+		idCounter = 0
+	})
 
 	listRad = 50
 	checkNum = 5
@@ -114,27 +134,29 @@ function check_neighbors() {
 }
 
 function set_color(colorStr) {
-	if (colorStr == "RED") {
-		color = "RED"
-		set_leds(255,0,0)
-	} 
-	else if(colorStr == "GREEN") {
-		color = "GREEN"
-		set_leds(0,255,0)
-	}
-	else if(colorStr == "BLUE") {
-		color = "BLUE"
-		set_leds(0,0,255)
+	if (not all_colors[colorStr] == nil) {
+		color = colorStr
+		colorRGB = all_colors[colorStr]
+		set_leds(colorRGB.r, colorRGB.g, colorRGB.b)
+		#debug.set_color(colorRGB.r, colorRGB.g, colorRGB.b)
 	}
 	else {
 		log("Color: ", colorStr, " is not defined")
 	}
 }
+
+function evaluate() {
+	P = phi*sin(pi*s)
+	ds = 4*c*(P-0.5)*(s-0.5)
+	y = ds/dt
+}
+
 # This function is executed at each time step
 # The main loop is controller by ARGoS
 function step() {
 	diffuse()
 	check_neighbors()
+	#evaluate()
 	neighbors.broadcast("colors", color)
 }
 
