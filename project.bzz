@@ -30,7 +30,8 @@
 # If you want syntax highlighting, JavaScript is pretty similar to Buzz.
 #
 
-include "../../Buzz/src/include/vec2.bzz"
+#include "../../Buzz/src/include/vec2.bzz"
+include "../../../WPI_SwarmIntel/Buzz/src/include/vec2.bzz"
 
 function diffuse() {	
 	# Get and sum proximity readings together
