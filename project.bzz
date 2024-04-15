@@ -35,18 +35,18 @@ include "../../Buzz/src/include/vec2.bzz"
 
 numRobots = 30
 all_colors = {}
-all_colors["RED"] =        {.r = 255, .g = 000, .b = 000, .num = 0.2}
-all_colors["ORANGE"] =     {.r = 255, .g = 128, .b = 000, .num = 0.0}
-all_colors["YELLOW"] =     {.r = 255, .g = 255, .b = 000, .num = 0.167}
-all_colors["CHARTREUSE"] = {.r = 128, .g = 255, .b = 000, .num = 0.0}
-all_colors["GREEN"] =      {.r = 000, .g = 255, .b = 000, .num = 0.167}
-all_colors["SPRING"] =     {.r = 000, .g = 255, .b = 128, .num = 0.0}
-all_colors["CYAN"] =       {.r = 000, .g = 255, .b = 255, .num = 0.167}
-all_colors["AZURE"] =      {.r = 000, .g = 128, .b = 255, .num = 0.0}
-all_colors["BLUE"] =       {.r = 000, .g = 000, .b = 255, .num = 0.167}
-all_colors["VIOLET"] =     {.r = 128, .g = 000, .b = 128, .num = 0.0}
-all_colors["MAGENTA"] =    {.r = 255, .g = 000, .b = 255, .num = 0.167}
-all_colors["ROSE"] =       {.r = 255, .g = 000, .b = 128, .num = 0.0}
+all_colors["RED"] =        {.r = 255, .g = 000, .b = 000, .num = 10}
+all_colors["ORANGE"] =     {.r = 255, .g = 128, .b = 000, .num = 0}
+all_colors["YELLOW"] =     {.r = 255, .g = 255, .b = 000, .num = 4}
+all_colors["CHARTREUSE"] = {.r = 128, .g = 255, .b = 000, .num = 0}
+all_colors["GREEN"] =      {.r = 000, .g = 255, .b = 000, .num = 4}
+all_colors["SPRING"] =     {.r = 000, .g = 255, .b = 128, .num = 0}
+all_colors["CYAN"] =       {.r = 000, .g = 255, .b = 255, .num = 4}
+all_colors["AZURE"] =      {.r = 000, .g = 128, .b = 255, .num = 0}
+all_colors["BLUE"] =       {.r = 000, .g = 000, .b = 255, .num = 4}
+all_colors["VIOLET"] =     {.r = 128, .g = 000, .b = 128, .num = 0}
+all_colors["MAGENTA"] =    {.r = 255, .g = 000, .b = 255, .num = 4}
+all_colors["ROSE"] =       {.r = 255, .g = 000, .b = 128, .num = 0}
 
 
 function diffuse() {	
@@ -87,7 +87,7 @@ function init() {
 	idCounter = 0
 	totalIdCounter = 0
 	foreach(all_colors, function(key, value) {
-		while (idCounter <= value.prob*numRobots-1) {
+		while (idCounter < value.num) {
 			if (id == totalIdCounter) {
 				set_color(key)
 				log("Setting ID: ", id, " Color: ", key)
@@ -167,4 +167,3 @@ function reset() {
 # This function is executed once when you close the simulator
 function destroy() {
 }
-
