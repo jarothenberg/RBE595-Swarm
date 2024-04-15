@@ -120,7 +120,6 @@ and to get help about a specific entity (for instance, the box)
 $ argos3 -q box
   -->
   <arena size="5, 5, 1" center="0,0,0.5">
-
     <!-- Place four boxes in a square to delimit the arena -->
     <box id="wall_north" size="4,0.1,0.5" movable="false">
       <body position="0,2,0" orientation="0,0,0" />
@@ -148,7 +147,7 @@ $ argos3 -q box
       <position method="uniform" min="-2,-2,0" max="2,2,0" />
       <orientation method="gaussian" mean="0,0,0" std_dev="360,0,0" />
       <entity quantity="30" max_trials="100">
-        <kheperaiv id="kiv" rab_data_size="100">
+        <kheperaiv id="kiv" rab_data_size="100" rab_range="10">
           <controller config="sync" />
         </kheperaiv>
       </entity>

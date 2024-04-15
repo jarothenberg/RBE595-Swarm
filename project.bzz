@@ -35,19 +35,20 @@ include "../../Buzz/src/include/vec2.bzz"
 
 numRobots = 30
 all_colors = {}
-all_colors["RED"] =        {.r = 255, .g = 000, .b = 000, .num = 10}
+all_colors["RED"] =        {.r = 255, .g = 000, .b = 000, .num = 15}
 all_colors["ORANGE"] =     {.r = 255, .g = 128, .b = 000, .num = 0}
-all_colors["YELLOW"] =     {.r = 255, .g = 255, .b = 000, .num = 4}
+all_colors["YELLOW"] =     {.r = 255, .g = 255, .b = 000, .num = 0}
 all_colors["CHARTREUSE"] = {.r = 128, .g = 255, .b = 000, .num = 0}
-all_colors["GREEN"] =      {.r = 000, .g = 255, .b = 000, .num = 4}
+all_colors["GREEN"] =      {.r = 000, .g = 255, .b = 000, .num = 0}
 all_colors["SPRING"] =     {.r = 000, .g = 255, .b = 128, .num = 0}
-all_colors["CYAN"] =       {.r = 000, .g = 255, .b = 255, .num = 4}
+all_colors["CYAN"] =       {.r = 000, .g = 255, .b = 255, .num = 0}
 all_colors["AZURE"] =      {.r = 000, .g = 128, .b = 255, .num = 0}
-all_colors["BLUE"] =       {.r = 000, .g = 000, .b = 255, .num = 4}
+all_colors["BLUE"] =       {.r = 000, .g = 000, .b = 255, .num = 15}
 all_colors["VIOLET"] =     {.r = 128, .g = 000, .b = 128, .num = 0}
-all_colors["MAGENTA"] =    {.r = 255, .g = 000, .b = 255, .num = 4}
+all_colors["MAGENTA"] =    {.r = 255, .g = 000, .b = 255, .num = 0}
 all_colors["ROSE"] =       {.r = 255, .g = 000, .b = 128, .num = 0}
 
+logRobot = 0
 
 function diffuse() {	
 	# Get and sum proximity readings together
@@ -90,7 +91,7 @@ function init() {
 		while (idCounter < value.num) {
 			if (id == totalIdCounter) {
 				set_color(key)
-				log("Setting ID: ", id, " Color: ", key)
+				#log("Setting ID: ", id, " Color: ", key)
 			}
 			idCounter = idCounter + 1
 			totalIdCounter = totalIdCounter + 1
@@ -101,8 +102,10 @@ function init() {
 	listRad = 50
 	checkNum = 5
 	neighbor_colors = {}
-
+	swarm_state_colors = {}
+	
 	neighbors.listen("colors", function(vid, value, rid) {
+		swarm_state_colors[rid] = value
 		if ((neighbor_colors[rid] == nil) and (neighbors.get(rid).distance <= listRad)) {
 				#log("RID: ", rid, ", COL: ", value)
 				neighbor_colors[rid] = value
@@ -131,6 +134,21 @@ function check_neighbors() {
 		#log("CHANGING COLOR: ", maxColor)
 		neighbor_colors = {}
 	}
+
+		#if (id == 13) {
+		swarm_state_colors[id] = color
+	#}
+	blueCount = 0.0
+	foreach(swarm_state_colors, function(key, value) {
+		if (value == "BLUE") {
+			blueCount = blueCount + 1
+		}
+	})
+	if (id == logRobot) {
+		s = blueCount/numRobots
+		#log("R13 says b=", blueCount, ", total=", numRobots)
+		log(s)
+	}
 }
 
 function set_color(colorStr) {
@@ -141,22 +159,16 @@ function set_color(colorStr) {
 		#debug.set_color(colorRGB.r, colorRGB.g, colorRGB.b)
 	}
 	else {
-		log("Color: ", colorStr, " is not defined")
+		#log("Color: ", colorStr, " is not defined")
 	}
 }
 
-function evaluate() {
-	P = phi*sin(pi*s)
-	ds = 4*c*(P-0.5)*(s-0.5)
-	y = ds/dt
-}
 
 # This function is executed at each time step
 # The main loop is controller by ARGoS
 function step() {
 	diffuse()
 	check_neighbors()
-	#evaluate()
 	neighbors.broadcast("colors", color)
 }
 
