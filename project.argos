@@ -13,7 +13,7 @@
         the computation is not parallelized: the main thread does
         everything.
     -->
-    <system threads="0" />
+    <system threads="32" />
     <!--
         Experiment configuration:
         - length: total experiment time in seconds (0 means the experiment
@@ -24,7 +24,7 @@
         message is displayed.
     -->
     <experiment length="0"
-                ticks_per_second="10"
+                ticks_per_second="1"
                 random_seed="0" />
   </framework>
 
@@ -49,7 +49,7 @@
         - library: the path to the compiled library containing you
         controller.
     -->
-    <buzz_controller_kheperaiv id="sync">
+    <buzz_controller_kheperaiv id="dyn">
       <!--
           The <actuators> section contains a list of the actuators used by
           this controller.
@@ -146,9 +146,9 @@ $ argos3 -q box
     <distribute>
       <position method="uniform" min="-2,-2,0" max="2,2,0" />
       <orientation method="gaussian" mean="0,0,0" std_dev="360,0,0" />
-      <entity quantity="30" max_trials="100">
-        <kheperaiv id="kiv" rab_data_size="100" rab_range="10">
-          <controller config="sync" />
+      <entity quantity="50" max_trials="100">
+        <kheperaiv id="kiv" rab_data_size="1000" rab_range="1000">
+          <controller config="dyn" />
         </kheperaiv>
       </entity>
     </distribute>
