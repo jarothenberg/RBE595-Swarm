@@ -39,11 +39,11 @@ all_colors["RED"] =        {.r = 255, .g = 000, .b = 000, .num = 25}
 all_colors["ORANGE"] =     {.r = 255, .g = 128, .b = 000, .num = 0}
 all_colors["YELLOW"] =     {.r = 255, .g = 255, .b = 000, .num = 0}
 all_colors["CHARTREUSE"] = {.r = 128, .g = 255, .b = 000, .num = 0}
-all_colors["GREEN"] =      {.r = 000, .g = 255, .b = 000, .num = 0}
+all_colors["GREEN"] =      {.r = 000, .g = 255, .b = 000, .num = 25}
 all_colors["SPRING"] =     {.r = 000, .g = 255, .b = 128, .num = 0}
 all_colors["CYAN"] =       {.r = 000, .g = 255, .b = 255, .num = 0}
 all_colors["AZURE"] =      {.r = 000, .g = 128, .b = 255, .num = 0}
-all_colors["BLUE"] =       {.r = 000, .g = 000, .b = 255, .num = 25}
+all_colors["BLUE"] =       {.r = 000, .g = 000, .b = 255, .num = 0}
 all_colors["VIOLET"] =     {.r = 128, .g = 000, .b = 128, .num = 0}
 all_colors["MAGENTA"] =    {.r = 255, .g = 000, .b = 255, .num = 0}
 all_colors["ROSE"] =       {.r = 255, .g = 000, .b = 128, .num = 0}
@@ -137,16 +137,15 @@ function check_neighbors() {
 
 	swarm_state_colors[id] = color
 
-	blueCount = 0.0
+	redCount = 0.0
 	foreach(swarm_state_colors, function(key, value) {
-		if (value == "BLUE") {
-			blueCount = blueCount + 1
+		if (value == "RED") {
+			redCount = redCount + 1
 		}
 	})
 	if (id == logRobot) {
 		log("ID: ", id, ": Robots Known: ", size(swarm_state_colors))
-		#s = blueCount/numRobots
-		#log("R13 says b=", blueCount, ", total=", numRobots)
+		#s = redCount/numRobots
 		#log(s)
 	}
 }
