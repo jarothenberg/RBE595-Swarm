@@ -13,7 +13,7 @@
         the computation is not parallelized: the main thread does
         everything.
     -->
-    <system threads="32" />
+    <system threads="0" />
     <!--
         Experiment configuration:
         - length: total experiment time in seconds (0 means the experiment
@@ -24,7 +24,7 @@
         message is displayed.
     -->
     <experiment length="0"
-                ticks_per_second="1"
+                ticks_per_second="10"
                 random_seed="0" />
   </framework>
 
@@ -85,7 +85,8 @@ footbot_wheels [default]
       <sensors>
         <kheperaiv_proximity implementation="default" show_rays="true" />
         <range_and_bearing   implementation="medium" medium="rab"
-                             show_rays="true" noise_std_dev="0" />
+                             show_rays="true" noise_std_dev="0"
+			     check_occlusions="false" />
         <positioning         implementation="default" />
       </sensors>
       <!--
