@@ -100,7 +100,7 @@ function init() {
 	})
 
 	listRad = 50
-	checkNum = 10
+	checkNum = 5
 	neighbor_colors = {}
 	swarm_state_colors = {}
 	printInterval = 50
