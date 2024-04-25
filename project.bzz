@@ -100,10 +100,11 @@ function init() {
 	})
 
 	listRad = 50
-	checkNum = 5
+	checkNum = 10
 	neighbor_colors = {}
 	swarm_state_colors = {}
-	
+	printInterval = 50
+	printCount = printInterval - 2 # ignore first step because communication hasn't happened yet
 	neighbors.listen("colors", function(vid, value, rid) {
 		swarm_state_colors[rid] = value
 		if ((neighbor_colors[rid] == nil) and (neighbors.get(rid).distance <= listRad)) {
@@ -125,7 +126,7 @@ function check_neighbors() {
 			else {
 				colorNums[value] = colorNums[value]+1
 			}
-			if (colorNums[value] > maxColorNum) {
+			if (colorNums[value] >= maxColorNum) {
 					maxColorNum = colorNums[value]
 					maxColor = value
 			}
@@ -143,10 +144,12 @@ function check_neighbors() {
 			redCount = redCount + 1
 		}
 	})
-	if (id == logRobot) {
-		log("ID: ", id, ": Robots Known: ", size(swarm_state_colors))
-		#s = redCount/numRobots
-		#log(s)
+	printCount = printCount + 1
+	if (printInterval == printCount and id == logRobot) {
+		#log("ID: ", id, ": Robots Known: ", size(swarm_state_colors))
+		s = redCount/numRobots
+		log(s)
+		printCount = 0
 	}
 }
 

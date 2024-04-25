@@ -86,8 +86,7 @@ footbot_wheels [default]
         <kheperaiv_proximity implementation="default" show_rays="true" />
         <range_and_bearing   implementation="medium" medium="rab"
                              show_rays="true" noise_std_dev="0"
-			     packet_drop_prob="0.0"
-			     check_occlusions="false" />
+			     packet_drop_prob="0.0" />
         <positioning         implementation="default" />
       </sensors>
       <!--
@@ -149,7 +148,7 @@ $ argos3 -q box
       <position method="uniform" min="-2,-2,0" max="2,2,0" />
       <orientation method="gaussian" mean="0,0,0" std_dev="360,0,0" />
       <entity quantity="50" max_trials="100">
-        <kheperaiv id="kiv" rab_data_size="1000" rab_range="1000">
+        <kheperaiv id="kiv" rab_data_size="100" rab_range="10">
           <controller config="dyn" />
         </kheperaiv>
       </entity>
@@ -183,7 +182,7 @@ $ argos3 -q box
 $ argos3 -q media
   -->
   <media>
-    <range_and_bearing id="rab" />
+    <range_and_bearing id="rab" check_occlusions="false"/>
     <led id="leds" />
   </media>
 
